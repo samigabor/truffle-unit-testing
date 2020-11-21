@@ -3,3 +3,4 @@
 `mkdir people`
 `cd people`
 `truffle init`
+`truffle migrate`
