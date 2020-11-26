@@ -33,24 +33,13 @@ contract('People', async (accounts) => {
     assert.equal(person[1], 70);
   });
 
-  it('should delete a person', async () => {
-    await instance.createPerson('Sam4', 30, 170, {value: web3.utils.toWei('2', 'ether')});
-    let person = await instance.getPerson();
-    assert.equal(person[0], 'Sam4', 'The name should be Sam4.');
-
-    await instance.deletePerson(accounts[0]);
-    person = await instance.getPerson();
-    assert.equal(person[0], '', 'The name should be an empty string because the person was deleted.');
+  it('should allow owner to delete people(the owner is the first address in the accounts array)', async () => {
+    await instance.createPerson('Sam4', 30, 170, {from: accounts[1], value: web3.utils.toWei('1', 'ether')});
+    truffleAssert.passes(instance.deletePerson(accounts[0]), truffleAssert.ErrorType.REVERT);
   });
 
-  it('should allow only contract owners to delete persons', async () => {
-    await instance.createPerson('Sam5', 30, 180, {value: web3.utils.toWei('1', 'ether')});
-    await instance.deletePerson(accounts[1]);
-    let person = await instance.getPerson();
-    assert.equal(person[0], 'Sam5', 'Person should not be deleted by anyone other than the owner.')
-
-    await instance.deletePerson(accounts[0]);
-    person = await instance.getPerson();
-    assert.equal(person[0], '', 'The name should be an empty string because the person was deleted by the contract owner.')
-  })
+  it('should not allow non-owner to delete people', async () => {
+    await instance.createPerson('Sam5', 30, 170, {from: accounts[1], value: web3.utils.toWei('1', 'ether')});
+    truffleAssert.fails(instance.deletePerson(accounts[1]), truffleAssert.ErrorType.REVERT);
+  });
 });
