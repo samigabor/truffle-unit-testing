@@ -40,6 +40,6 @@ contract('People', async (accounts) => {
 
   it('should not allow non-owner to delete people', async () => {
     await instance.createPerson('Sam5', 30, 170, {from: accounts[1], value: web3.utils.toWei('1', 'ether')});
-    truffleAssert.fails(instance.deletePerson(accounts[1]), truffleAssert.ErrorType.REVERT);
+    truffleAssert.fails(instance.deletePerson(accounts[1]));
   });
 });
